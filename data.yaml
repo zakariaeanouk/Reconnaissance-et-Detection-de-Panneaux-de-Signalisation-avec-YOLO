@@ -1,0 +1,53 @@
+train: /kaggle/input/projet/GTSRB/GTSRB/New_Train/images
+val: /kaggle/input/projet/GTSRB/GTSRB/Validation/images
+test: /kaggle/input/projet/GTSRB/GTSRB/Test/images
+
+# Nombre de classes
+nc: 43
+
+# Liste des classes
+names:
+  - Speed_Limit_20
+  - Speed_Limit_30
+  - Speed_Limit_50
+  - Speed_Limit_60
+  - Speed_Limit_70
+  - Speed_Limit_80
+  - End_of_speed_limit 
+  - Speed_Limit_100
+  - Speed_Limit_120
+  - No_overtaking
+  - No_overtaking_by_trucks
+  - Intersection_with_a_minor_road
+  - Priority_road
+  - Give_way
+  - Stop
+  - Road_closed_to_all_vehicles
+  - No_trucks
+  - No_entry
+  - Other_dangers
+  - Curve_to_the_left
+  - Curve_to_the_right
+  - Double_curve_first_to_left
+  - Uneven_road
+  - Slippery_road
+  - Road_narrows_on_the_right
+  - Roadworks
+  - Traffic_lights
+  - Pedestrian_crossing_ahead
+  - Children
+  - Bicycle crossing
+  - Snow
+  - Deer_crossing
+  - End_of_all_restrictions_and_prohibitions
+  - Turn_right_only
+  - Turn_left_only
+  - Go_straight_only
+  - Proceed_straight_or_turn_right
+  - Proceed_straight_or_turn_left
+  - Keep_right
+  - Keep_left
+  - Roundabout
+  - End_overtaking_prohibition
+  - End_overtaking_prohibition_for_trucks
+

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détection et Classification</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 100vh;
+            background: url('/Users/zakariaeanouk/Desktop/projet ML/deploiement/sygic-traffic-sign-recognition.jpg') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding-left: 20%;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 20px auto;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        /* From Uiverse.io by Wendell47 */ 
+        .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 30px;
+        border: 0;
+        position: relative;
+        overflow: hidden;
+        border-radius: 10rem;
+        transition: all 0.02s;
+        font-weight: bold;
+        cursor: pointer;
+        color: rgb(37, 37, 37);
+        z-index: 0;
+        box-shadow: 0 0px 7px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .button:hover {
+        background: rgb(193, 228, 248);
+        color: rgb(33, 0, 85);
+        }
+
+        .button:active {
+        transform: scale(0.97);
+        }
+
+        .hoverEffect {
+        position: absolute;
+        bottom: 0;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+        }
+
+        .hoverEffect div {
+        background: rgb(222, 0, 75);
+        background: linear-gradient(
+            90deg,
+            rgba(222, 0, 75, 1) 0%,
+            rgba(191, 70, 255, 1) 49%,
+            rgba(0, 212, 255, 1) 100%
+        );
+        border-radius: 40rem;
+        width: 10rem;
+        height: 10rem;
+        transition: 0.4s;
+        filter: blur(20px);
+        animation: effect infinite 3s linear;
+        opacity: 0.5;
+        }
+
+        .button:hover .hoverEffect div {
+        width: 8rem;
+        height: 8rem;
+        }
+
+        @keyframes effect {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+        }
+
+        #prediction-result {
+            margin-top: 20px;
+            font-size: 20px;
+            color: #333;
+            text-align: left;
+        }
+        #image-container { 
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        #annotated-image {
+            margin-top: 20px;
+            max-width: 50%;
+            border-radius: 10px;
+            text-align: center;
+        }
+        ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Détection et Classification</h1>
+    <input type="file" id="file-input" accept="image/*">
+    <button onclick="uploadImage()" class="button">
+        Upload Image 
+        <div class="hoverEffect">
+            <div></div>
+        </div>
+    </button>
+    <div id="image-container">
+        <img id="annotated-image" style="display:none;" />
+    </div>
+    <div id="prediction-result"></div>
+</div>
+
+<script>
+    async function uploadImage() {
+        const fileInput = document.getElementById('file-input');
+        const resultDiv = document.getElementById('prediction-result');
+        const imgElement = document.getElementById('annotated-image');
+        
+        if (fileInput.files.length === 0) {
+            alert('Please select a file first.');
+            return;
+        }
+
+        // Clear previous results
+        resultDiv.innerHTML = '';
+        imgElement.style.display = 'none';
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const response = await fetch('http://localhost:8000/predict/', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            console.log(result);
+
+            displayPrediction(result);
+            
+            // Add timestamp to prevent browser caching
+            if (result.image_url) {
+                displayImage(`${result.image_url}?t=${Date.now()}`);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            resultDiv.innerText = 'Error: ' + error.message;
+        }
+    }
+
+    function displayPrediction(result) {
+        const resultDiv = document.getElementById('prediction-result');
+        if (result.message) {
+            resultDiv.innerHTML = `<p>${result.message}</p>`;
+        } else if (result.predictions) {
+            let html = '<ul>';
+            result.predictions.forEach((prediction, index) => {
+                html += `<li>Panneau ${index + 1} : ${prediction}</li>`;
+            });
+            html += '</ul>';
+            resultDiv.innerHTML = html;
+        }
+    }
+
+    function displayImage(imageUrl) {
+        const imgElement = document.getElementById('annotated-image');
+        imgElement.src = `http://localhost:8000/${imageUrl}`;
+        imgElement.style.display = 'block';
+    }
+</script>
+</body>
+</html>

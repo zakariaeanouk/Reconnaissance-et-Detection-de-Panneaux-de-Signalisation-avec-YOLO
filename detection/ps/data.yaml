@@ -1,0 +1,6 @@
+train: /kaggle/input/positionnement/ps/New_Train/images
+val: /kaggle/input/positionnement/ps/Validation/images
+test: /kaggle/input/positionnement/ps/Test/images
+names:
+  0: panneau
+nc: 1
